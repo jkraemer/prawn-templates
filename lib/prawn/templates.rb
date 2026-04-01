@@ -292,4 +292,4 @@ else
 end
 Prawn::Document.extensions << Prawn::Templates
 
-PDF::Core::ObjectStore.include Prawn::Templates::ObjectStoreExtensions
+PDF::Core::ObjectStore.prepend Prawn::Templates::ObjectStoreExtensions

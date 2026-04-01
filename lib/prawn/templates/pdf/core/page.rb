@@ -60,6 +60,7 @@ module PDF
       def new_content_stream
         return if in_stamp_stream?
 
+        dictionary.data = dictionary.data.dup
         contents = ensure_contents_array
         @content = document.ref({})
         contents << document.state.store[@content]

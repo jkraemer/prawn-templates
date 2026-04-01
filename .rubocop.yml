@@ -1,6 +1,9 @@
 inherit_gem:
   prawn-dev: rubocop.yml
 
+AllCops:
+  TargetRubyVersion: 3.1
+
 RSpec/ExampleLength:
   Enabled: false
 
@@ -39,6 +42,9 @@ Style/AsciiComments:
   Enabled: false
 
 Style/Documentation:
+  Enabled: false
+
+Style/DocumentationMethod:
   Enabled: false
 
 Layout/FirstArrayElementLineBreak:

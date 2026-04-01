@@ -38,7 +38,7 @@ module Prawn
       page_options = {
         size: options[:size] || last_page_size,
         layout: options[:layout] || last_page_layout,
-        margins: last_page_margins
+        margins: last_page_margins,
       }
       if last_page
         if last_page.graphic_state
@@ -89,7 +89,7 @@ module Prawn
     def merge_template_options(page_options, options)
       object_id = state.store.import_page(
         options[:template],
-        options[:template_page] || 1
+        options[:template_page] || 1,
       )
       page_options.merge!(object_id: object_id, page_template: true)
     end
@@ -120,7 +120,7 @@ module Prawn
           else
             raise ArgumentError,
               'input must be an IO-like object or a ' \
-                             'filename'
+                'filename'
           end
 
         hash = indexed_hash(input, io)
@@ -132,13 +132,13 @@ module Prawn
           index_template(
             input,
             page_num,
-            load_object_graph(hash, ref).identifier
+            load_object_graph(hash, ref).identifier,
           )
         end
       rescue PDF::Reader::MalformedPDFError,
              PDF::Reader::InvalidObjectError => e
-        msg = 'Error reading template file. If you are sure it\'s a valid PDF,'\
-              " it may be a bug.\n#{e.message}"
+        msg = 'Error reading template file. If you are sure it\'s a valid PDF, ' \
+          "it may be a bug.\n#{e.message}"
         raise PDF::Core::Errors::TemplateError, msg
       rescue PDF::Reader::UnsupportedFeatureError
         msg = 'Template file contains unsupported PDF features'
@@ -209,11 +209,11 @@ module Prawn
         hash = PDF::Reader::ObjectHash.new(template)
         src_info = hash.trailer[:Info]
         src_root = hash.trailer[:Root]
-        @min_version = hash.pdf_version.to_f
+        @min_version = Float(hash.pdf_version)
 
         if hash.trailer[:Encrypt]
-          msg = 'Template file is an encrypted PDF, it can\'t be used as a '\
-              'template'
+          msg = 'Template file is an encrypted PDF, it can\'t be used as a ' \
+            'template'
           raise PDF::Core::Errors::TemplateError, msg
         end
 
@@ -226,8 +226,8 @@ module Prawn
         end
       rescue PDF::Reader::MalformedPDFError,
              PDF::Reader::InvalidObjectError => e
-        msg = 'Error reading template file. If you are sure it\'s a valid PDF,'\
-              " it may be a bug.\n#{e.message}"
+        msg = 'Error reading template file. If you are sure it\'s a valid PDF, ' \
+          "it may be a bug.\n#{e.message}"
         raise PDF::Core::Errors::TemplateError, msg
       rescue PDF::Reader::UnsupportedFeatureError
         msg = 'Template file contains unsupported PDF features'
@@ -283,8 +283,8 @@ if Prawn::Document::VALID_OPTIONS.frozen?
     :VALID_OPTIONS,
     (Prawn::Document.send(
       :remove_const,
-      :VALID_OPTIONS
-    ).dup << :template).freeze
+      :VALID_OPTIONS,
+    ).dup << :template).freeze,
   )
   # rubocop:enable Style/Send
 else
@@ -292,4 +292,4 @@ else
 end
 Prawn::Document.extensions << Prawn::Templates
 
-PDF::Core::ObjectStore.prepend Prawn::Templates::ObjectStoreExtensions
+PDF::Core::ObjectStore.prepend(Prawn::Templates::ObjectStoreExtensions)

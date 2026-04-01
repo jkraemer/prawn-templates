@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-puts "PDF::Core specs: Running on Ruby Version: #{RUBY_VERSION}"
-
 require 'bundler'
 Bundler.setup
 
@@ -17,7 +15,7 @@ require 'rspec'
 require 'pdf/reader'
 require 'pdf/inspector'
 
-RSpec::Matchers.define :have_parseable_xobjects do
+RSpec::Matchers.define(:have_parseable_xobjects) do
   match do |actual|
     expect { PDF::Inspector::XObject.analyze(actual.render) }.to_not raise_error
     true

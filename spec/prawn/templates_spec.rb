@@ -3,7 +3,7 @@
 require_relative '../spec_helper'
 require_relative '../../lib/prawn/templates'
 
-DATADIR = "#{File.dirname(__FILE__)}/../../data"
+DATADIR = "#{File.dirname(__FILE__)}/../../data".freeze
 
 describe Prawn::Templates do
   describe 'Document built from a template' do
@@ -39,17 +39,17 @@ describe Prawn::Templates do
 
     it 'handles a document with a nil Contents entry' do
       filename = "#{DATADIR}/pdfs/corrupt_identifier_for_nil.pdf"
-      expect do
+      expect {
         Prawn::Document.new(template: filename)
-      end.to_not raise_error
+      }.to_not raise_error
     end
 
-    it 'does not set the template page\'s parent to the document pages catalog'\
-      ' (especially with nested pages)' do
+    it 'does not set the template page\'s parent to the document pages catalog ' \
+      '(especially with nested pages)' do
       filename = "#{DATADIR}/pdfs/nested_pages.pdf"
       pdf = Prawn::Document.new(template: filename, skip_page_creation: true)
       expect(pdf.state.page.dictionary.data[:Parent]).to_not eq(
-        pdf.state.store.pages
+        pdf.state.store.pages,
       )
     end
 
@@ -68,7 +68,7 @@ describe Prawn::Templates do
         left: 0,
         right: 0,
         top: 0,
-        bottom: 0
+        bottom: 0,
       )
 
       pdf = Prawn::Document.new(template: filename, left_margin: 0)
@@ -76,7 +76,7 @@ describe Prawn::Templates do
         left: 0,
         right: 36,
         top: 36,
-        bottom: 36
+        bottom: 36,
       )
 
       pdf.start_new_page(right_margin: 0)
@@ -84,12 +84,12 @@ describe Prawn::Templates do
         left: 0,
         right: 0,
         top: 36,
-        bottom: 36
+        bottom: 36,
       )
     end
 
-    it 'does not add an extra restore_graphics_state operator to the end of '\
-        'any content stream' do
+    it 'does not add an extra restore_graphics_state operator to the end of ' \
+      'any content stream' do
       filename = "#{DATADIR}/pdfs/curves.pdf"
 
       pdf = Prawn::Document.new(template: filename)
@@ -100,7 +100,7 @@ describe Prawn::Templates do
         next unless obj.is_a?(PDF::Reader::Stream)
 
         data = obj.data.tr(" \n\r", '')
-        expect(data).to_not include 'QQ'
+        expect(data).to_not include('QQ')
       end
     end
 
@@ -112,9 +112,9 @@ describe Prawn::Templates do
       hash = PDF::Reader::ObjectHash.new(output)
 
       pages =
-        hash.values.select do |obj|
+        hash.values.select { |obj|
           obj.is_a?(Hash) && obj[:Type] == :Page
-        end
+        }
 
       expect(pages.size).to eq 1
     end
@@ -134,9 +134,9 @@ describe Prawn::Templates do
     it 'does not die if using this PDF as a template' do
       filename = "#{DATADIR}/pdfs/complex_template.pdf"
 
-      expect do
+      expect {
         Prawn::Document.new(template: filename)
-      end.to_not raise_error
+      }.to_not raise_error
     end
 
     it 'wraps and balances q/Q streams' do
@@ -170,23 +170,23 @@ describe Prawn::Templates do
 
       pdf = Prawn::Document.new(template: filename)
 
-      pdf.text 'Adding some text'
+      pdf.text('Adding some text')
 
       text = PDF::Inspector::Text.analyze(pdf.render)
       expect(text.strings.first).to eq 'Adding some text'
     end
 
-    it 'allows PDFs with page resources behind an indirect object to be used '\
-        'as templates' do
+    it 'allows PDFs with page resources behind an indirect object to be used ' \
+      'as templates' do
       filename = "#{DATADIR}/pdfs/resources_as_indirect_object.pdf"
 
       pdf = Prawn::Document.new(template: filename)
 
-      pdf.text 'Adding some text'
+      pdf.text('Adding some text')
 
       text = PDF::Inspector::Text.analyze(pdf.render)
       all_text = text.strings.join
-      expect(all_text).to include 'Adding some text'
+      expect(all_text).to include('Adding some text')
     end
 
     it 'copies the PDF version from the template file' do
@@ -200,17 +200,17 @@ describe Prawn::Templates do
     it 'correctly adds a TTF font to a template that has existing fonts' do
       filename = "#{DATADIR}/pdfs/contains_ttf_font.pdf"
       pdf = Prawn::Document.new(template: filename)
-      pdf.font "#{DATADIR}/fonts/DejaVuSans.ttf"
+      pdf.font("#{DATADIR}/fonts/DejaVuSans.ttf")
       pdf.move_down(40)
-      pdf.text 'Hi There'
+      pdf.text('Hi There')
 
       output = StringIO.new(pdf.render)
       hash = PDF::Reader::ObjectHash.new(output)
 
       page_dict =
-        hash.values.find do |obj|
+        hash.values.find { |obj|
           obj.is_a?(Hash) && obj[:Type] == :Page
-        end
+        }
       resources = page_dict[:Resources]
       fonts = resources[:Font]
       expect(fonts.size).to eq 2
@@ -240,14 +240,14 @@ describe Prawn::Templates do
         Title: 'Sample METADATA',
         Author: 'Me',
         Subject: 'Not Working',
-        CreationDate: Time.now
+        CreationDate: Time.now,
       }
 
       pdf = Prawn::Document.new(template: filename, info: info)
       output = StringIO.new(pdf.render)
       hash = PDF::Reader::ObjectHash.new(output)
       info.each_key do |k|
-        expect(hash[hash.trailer[:Info]].key?(k)).to eq true
+        expect(hash[hash.trailer[:Info]].key?(k)).to be true
       end
     end
 
@@ -257,22 +257,22 @@ describe Prawn::Templates do
 
       # expect the inherited value to be a reference
       # rubocop:disable Style/Send
-      expect(pdf.state.page.send(:inherited_dictionary_value, :MediaBox)).to be_a PDF::Core::Reference
+      expect(pdf.state.page.send(:inherited_dictionary_value, :MediaBox)).to be_a(PDF::Core::Reference)
       # rubocop:enable Style/Send
 
       # expect dimensions to come back as an array
-      expect(pdf.state.page.dimensions).to be_a Array
+      expect(pdf.state.page.dimensions).to be_a(Array)
     end
   end
 
   describe 'Document#start_new_page with :template option' do
-    filename = "#{DATADIR}/pdfs/curves.pdf"
+    let(:filename) { "#{DATADIR}/pdfs/curves.pdf" }
 
     it "sets the imported page's parent to the document pages catalog" do
       pdf = Prawn::Document.new
       pdf.start_new_page(template: filename)
       expect(pdf.state.page.dictionary.data[:Parent]).to eq(
-        pdf.state.store.pages
+        pdf.state.store.pages,
       )
     end
 
@@ -289,7 +289,7 @@ describe Prawn::Templates do
         left: 0,
         right: 0,
         top: 0,
-        bottom: 0
+        bottom: 0,
       )
 
       pdf = Prawn::Document.new(left_margin: 0)
@@ -298,19 +298,19 @@ describe Prawn::Templates do
         left: 0,
         right: 36,
         top: 36,
-        bottom: 36
+        bottom: 36,
       )
       pdf.start_new_page(template: filename, right_margin: 0)
       expect(pdf.page.margins).to eq(
         left: 0,
         right: 0,
         top: 36,
-        bottom: 36
+        bottom: 36,
       )
     end
 
-    it 'does not add an extra restore_graphics_state operator to the end of '\
-        'any content stream' do
+    it 'does not add an extra restore_graphics_state operator to the end of ' \
+      'any content stream' do
       pdf = Prawn::Document.new
       pdf.start_new_page(template: filename)
       output = StringIO.new(pdf.render)
@@ -320,7 +320,7 @@ describe Prawn::Templates do
         next unless obj.is_a?(PDF::Reader::Stream)
 
         data = obj.data.tr(" \n\r", '')
-        expect(data).to_not include 'QQ'
+        expect(data).to_not include('QQ')
       end
     end
 
@@ -330,9 +330,9 @@ describe Prawn::Templates do
       pdf.start_new_page(template: filename)
       output = StringIO.new(pdf.render)
       hash = PDF::Reader::ObjectHash.new(output)
-      pages = hash.values.find do |obj|
+      pages = hash.values.find { |obj|
         obj.is_a?(Hash) && obj[:Type] == :Pages
-      end[:Kids]
+      }[:Kids]
       template_page = hash[pages[1]]
       expect(template_page[:Contents].size).to eq 2
     end
@@ -358,39 +358,39 @@ describe Prawn::Templates do
       pdf = Prawn::Document.new
       pdf.start_new_page(template: filename)
 
-      pdf.text 'Adding some text'
+      pdf.text('Adding some text')
 
       text = PDF::Inspector::Text.analyze(pdf.render)
       expect(text.strings.first).to eq 'Adding some text'
     end
 
-    it 'allows PDFs with page resources behind an indirect object to be used '\
-        'as templates' do
+    it 'allows PDFs with page resources behind an indirect object to be used ' \
+      'as templates' do
       filename = "#{DATADIR}/pdfs/resources_as_indirect_object.pdf"
 
       pdf = Prawn::Document.new
       pdf.start_new_page(template: filename)
 
-      pdf.text 'Adding some text'
+      pdf.text('Adding some text')
 
       text = PDF::Inspector::Text.analyze(pdf.render)
       all_text = text.strings.join
-      expect(all_text).to include 'Adding some text'
+      expect(all_text).to include('Adding some text')
     end
 
     it 'correctly adds a TTF font to a template that has existing fonts' do
       filename = "#{DATADIR}/pdfs/contains_ttf_font.pdf"
       pdf = Prawn::Document.new
       pdf.start_new_page(template: filename)
-      pdf.font "#{DATADIR}/fonts/DejaVuSans.ttf"
+      pdf.font("#{DATADIR}/fonts/DejaVuSans.ttf")
       pdf.move_down(40)
-      pdf.text 'Hi There'
+      pdf.text('Hi There')
 
       output = StringIO.new(pdf.render)
       hash = PDF::Reader::ObjectHash.new(output)
-      pages = hash.values.find do |obj|
+      pages = hash.values.find { |obj|
         obj.is_a?(Hash) && obj[:Type] == :Pages
-      end[:Kids]
+      }[:Kids]
       template_page = hash[pages[1]]
       resources = template_page[:Resources]
       fonts = resources[:Font]
@@ -403,20 +403,20 @@ describe Prawn::Templates do
       3.times { repeated_pdf.start_new_page(template: filename) }
       repeated_hash = PDF::Reader::ObjectHash.new(
         StringIO.new(
-          repeated_pdf.render
-        )
+          repeated_pdf.render,
+        ),
       )
       sequential_pdf = Prawn::Document.new
       (1..3).each do |p|
         sequential_pdf.start_new_page(
           template: filename,
-          template_page: p
+          template_page: p,
         )
       end
       sequential_hash = PDF::Reader::ObjectHash.new(
         StringIO.new(
-          sequential_pdf.render
-        )
+          sequential_pdf.render,
+        ),
       )
       expect(repeated_hash.size < sequential_hash.size).to be_truthy
     end
@@ -469,37 +469,37 @@ describe Prawn::Templates do
       expect(store.pages.data[:Count]).to eq 1
     end
 
-    it 'imports all objects from a PDF that has an indirect reference in a '\
-        'stream dict' do
+    it 'imports all objects from a PDF that has an indirect reference in a ' \
+      'stream dict' do
       filename = "#{DATADIR}/pdfs/indirect_reference.pdf"
       store = PDF::Core::ObjectStore.new(template: filename)
       expect(store.size).to eq 8
     end
 
-    it 'raises error ArgumentError when given a file that doesn exist as a '\
-        'template' do
+    it 'raises error ArgumentError when given a file that doesn exist as a ' \
+      'template' do
       filename = 'not_really_there.pdf'
 
       expect { PDF::Core::ObjectStore.new(template: filename) }.to raise_error(
-        ArgumentError
+        ArgumentError,
       )
     end
 
-    it 'raises error PDF::Core::Errors::TemplateError when given a non PDF as '\
-        'a template' do
+    it 'raises error PDF::Core::Errors::TemplateError when given a non PDF as ' \
+      'a template' do
       filename = "#{DATADIR}/images/dice.png"
 
       expect { PDF::Core::ObjectStore.new(template: filename) }.to raise_error(
-        PDF::Core::Errors::TemplateError
+        PDF::Core::Errors::TemplateError,
       )
     end
 
-    it 'raises error PDF::Core::Errors::TemplateError when given an encrypted '\
-        'PDF as a template' do
+    it 'raises error PDF::Core::Errors::TemplateError when given an encrypted ' \
+      'PDF as a template' do
       filename = "#{DATADIR}/pdfs/encrypted.pdf"
 
       expect { PDF::Core::ObjectStore.new(template: filename) }.to raise_error(
-        PDF::Core::Errors::TemplateError
+        PDF::Core::Errors::TemplateError,
       )
     end
   end
@@ -523,15 +523,15 @@ describe Prawn::Templates do
       expect(store.object_id_for_page(-1)).to eq 6
     end
 
-    it 'returns the object ID of the first page of a template that uses nested'\
-        ' Pages' do
+    it 'returns the object ID of the first page of a template that uses nested ' \
+      'Pages' do
       filename = "#{DATADIR}/pdfs/nested_pages.pdf"
       store = PDF::Core::ObjectStore.new(template: filename)
       expect(store.object_id_for_page(1)).to eq 5
     end
 
-    it 'returns the object ID of the last page of a template that uses nested '\
-        'Pages' do
+    it 'returns the object ID of the last page of a template that uses nested ' \
+      'Pages' do
       filename = "#{DATADIR}/pdfs/nested_pages.pdf"
       store = PDF::Core::ObjectStore.new(template: filename)
       expect(store.object_id_for_page(-1)).to eq 8
@@ -541,18 +541,18 @@ describe Prawn::Templates do
       it 'with a template' do
         filename = "#{DATADIR}/pdfs/hexagon.pdf"
         store = PDF::Core::ObjectStore.new(template: filename)
-        expect(store.object_id_for_page(10)).to eq nil
+        expect(store.object_id_for_page(10)).to be_nil
       end
 
       it 'without a template' do
         store = PDF::Core::ObjectStore.new
-        expect(store.object_id_for_page(10)).to eq nil
+        expect(store.object_id_for_page(10)).to be_nil
       end
     end
 
     it 'accepts a stream instead of a filename' do
       example = Prawn::Document.new
-      example.text 'An example doc, created in memory'
+      example.text('An example doc, created in memory')
       example.start_new_page
       pdf = nil
       StringIO.open(example.render) do |stream|

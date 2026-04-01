@@ -10,7 +10,7 @@ module PDF
           left: 36,
           right: 36,
           top: 36,
-          bottom: 36
+          bottom: 36,
         }
         @crops = options[:crops] || ZERO_INDENTS
         @bleeds = options[:bleeds] || ZERO_INDENTS
@@ -45,12 +45,12 @@ module PDF
         # Save graphics context
         @content = document.ref({})
         contents.unshift(document.state.store[@content])
-        document.add_content 'q'
+        document.add_content('q')
 
         # Restore graphics context
         @content = document.ref({})
         contents << document.state.store[@content]
-        document.add_content 'Q'
+        document.add_content('Q')
       end
 
       # As per the PDF spec, each page can have multiple content streams. This
@@ -67,13 +67,13 @@ module PDF
         document.open_graphics_state
       end
 
-      unless method_defined? :imported_page?
+      unless method_defined?(:imported_page?)
         def imported_page?
           @imported_page
         end
       end
 
-      alias __dimensions dimensions if method_defined? :dimensions
+      alias __dimensions dimensions if method_defined?(:dimensions)
       def dimensions
         if imported_page?
           media_box = inherited_dictionary_value(:MediaBox)
@@ -95,11 +95,11 @@ module PDF
           end
       end
 
-      if method_defined? :init_from_object
+      if method_defined?(:init_from_object)
         alias __init_from_object init_from_object
       end
       def init_from_object(options)
-        @dictionary = options[:object_id].to_i
+        @dictionary = options[:object_id].to_i # rubocop:disable Lint/NumberConversion
         if options[:page_template]
           dictionary.data[:Parent] = document.state.store.pages
         end
@@ -118,7 +118,7 @@ module PDF
         @imported_page = true
       end
 
-      alias __init_new_page init_new_page if method_defined? :init_new_page
+      alias __init_new_page init_new_page if method_defined?(:init_new_page)
       def init_new_page(options)
         @size = options[:size] || 'LETTER'
         @layout = options[:layout] || :portrait
@@ -137,7 +137,7 @@ module PDF
           BleedBox: bleed_box,
           TrimBox: trim_box,
           ArtBox: art_box,
-          Contents: content
+          Contents: content,
         )
 
         resources[:ProcSet] = %i[PDF Text ImageB ImageC ImageI]

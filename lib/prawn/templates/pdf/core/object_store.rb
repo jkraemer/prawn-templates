@@ -20,7 +20,7 @@ module PDF
         end
       end
 
-      alias __utf8? utf8? if method_defined? :utf8?
+      alias __utf8? utf8? if method_defined?(:utf8?)
       def utf8?(str)
         str.force_encoding(::Encoding::UTF_8)
         str.valid_encoding?

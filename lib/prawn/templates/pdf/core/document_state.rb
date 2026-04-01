@@ -12,7 +12,7 @@ module PDF
             if options[:print_scaling]
               PDF::Core::ObjectStore.new(
                 template: options[:template],
-                print_scaling: options[:print_scaling]
+                print_scaling: options[:print_scaling],
               )
             else
               PDF::Core::ObjectStore.new(template: options[:template])
@@ -23,7 +23,7 @@ module PDF
             if options[:print_scaling]
               PDF::Core::ObjectStore.new(
                 info: options[:info],
-                print_scaling: options[:print_scaling]
+                print_scaling: options[:print_scaling],
               )
             else
               PDF::Core::ObjectStore.new(info: options[:info])

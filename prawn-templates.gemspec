@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
     'prawn-templates.gemspec', 'COPYING', 'LICENSE', 'GPLv2', 'GPLv3'
   ]
   spec.require_path = 'lib'
-  spec.required_ruby_version = '>= 2.6'
+  spec.required_ruby_version = '>= 3.1'
   spec.required_rubygems_version = '>= 2.0.0'
   spec.licenses = %w[Nonstandard GPL-2.0 GPL-3.0]
 

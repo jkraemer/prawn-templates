@@ -457,7 +457,7 @@ describe Prawn::Templates do
     end
 
     it 'points to existing roots when importing objects from an existing PDF' do
-      filename = "#{Prawn::BASEDIR}/spec/data/curves.pdf"
+      filename = "#{DATADIR}/pdfs/curves.pdf"
       store = PDF::Core::ObjectStore.new(template: filename)
       expect(store.info.class).to eq(PDF::Core::Reference)
       expect(store.root.class).to eq(PDF::Core::Reference)

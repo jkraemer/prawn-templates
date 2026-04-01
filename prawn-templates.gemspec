@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency('prawn', '~> 2.2')
   spec.add_development_dependency('pdf-inspector', '~> 1.3')
   spec.add_development_dependency('prawn-dev', '~> 0.6.0')
+  spec.add_development_dependency('rubocop-rake', '~> 0.7')
   spec.homepage = 'https://github.com/prawnpdf/prawn-templates'
   spec.description = 'A extension to prawn that allows to include other pdfs ' \
     'either as background to write upon or to combine several pdf documents ' \
